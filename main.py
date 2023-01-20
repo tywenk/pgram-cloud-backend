@@ -1,27 +1,28 @@
+import uvicorn
 from fastapi import FastAPI
-from pydantic import BaseModel
+from fastapi.middleware.cors import CORSMiddleware
+from app.routes.router import Router
+from app.config import DefaultConfig
 
 app = FastAPI()
 
-class Msg(BaseModel):
-    msg: str
+config = DefaultConfig()
 
+origins = ["http://localhost:8000"]
 
-@app.get("/")
-async def root():
-    return {"message": "Hello World. Welcome to FastAPI!"}
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
+router = Router()
+app.include_router(router.router)
 
-@app.get("/path")
-async def demo_get():
-    return {"message": "This is /path endpoint, use a post request to transform the text to uppercase"}
-
-
-@app.post("/path")
-async def demo_post(inp: Msg):
-    return {"message": inp.msg.upper()}
-
-
-@app.get("/path/{path_id}")
-async def demo_get_path_id(path_id: int):
-    return {"message": f"This is /path/{path_id} endpoint, use post request to retrieve result"}
+if __name__ == "__main__":
+    uvicorn.run(
+        app="main:app", host="127.0.0.1", port=8000, log_level="info", reload=True
+    )
+    print("pgram running")
