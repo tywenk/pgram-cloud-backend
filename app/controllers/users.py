@@ -5,6 +5,7 @@ from typing import Union, Literal
 from botocore.exceptions import ClientError
 from app import DefaultConfig
 from app import AWSClient
+from urllib.parse import unquote
 
 
 router = APIRouter(
@@ -32,7 +33,7 @@ async def buckets():
 @router.get("/upload")
 async def upload(filename: str = ""):
     bucket = aws_client.S3_BUCKET_NAME
-    key = "images/" + filename
+    key = "images/" + unquote(filename)
     url = generate_presigned_url(s3, "get_object", bucket, key)
     return url
 
