@@ -34,7 +34,7 @@ async def buckets():
 async def upload(filename: str = ""):
     bucket = aws_client.S3_BUCKET_NAME
     key = "images/" + unquote(filename)
-    url = generate_presigned_url(s3, "get_object", bucket, key)
+    url = generate_presigned_url(s3, "put_object", bucket, key)
     return url
 
 
@@ -51,7 +51,7 @@ def generate_presigned_url(
     client_method: Union[Literal["get_object"], Literal["put_object"]],
     bucket_name: str,
     object_name: str,
-    expiration: int = 3600,
+    expiration: int = 100,
 ):
     """
     Generate a presigned Amazon S3 URL that can be used to perform an action.
